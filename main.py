@@ -20,10 +20,10 @@ async def attachments_to_files(attached,spoiler=False):
 	return filelist
 
 async def morelikeend(morelike, original, message):
-    if morelike.lower() == original.lower():
-        await message.channel.send(f"{original} is perfect, it cannot be changed")
-    else:
-        await message.channel.send(f"{original}? more like {morelike}")
+	if morelike.lower() == original.lower():
+		await message.channel.send(f"{original} is perfect, it cannot be changed")
+	else:
+		await message.channel.send(f"{original}? more like {morelike}")
 
 @client.event
 async def on_ready():
@@ -49,249 +49,249 @@ adminhelpmessage.set_footer(text="all of these commands can only be done if you 
 
 @client.event
 async def on_message(message):
-    
-    if message.author.id in BlacklistedUsers:
-        return
+	
+	if message.author.id in BlacklistedUsers:
+		return
 
-    admin = discord.utils.get(message.guild.roles, id=757434054416007178)
+	admin = discord.utils.get(message.guild.roles, id=757434054416007178)
 
-    args = message.content.lower
-    args = message.content.replace(prefix,"")
-    argslist = args.split(" ")
+	args = message.content.lower
+	args = message.content.replace(prefix,"")
+	argslist = args.split(" ")
 
-    modchat = discord.utils.get(message.guild.channels, id=757449377819263028)
+	modchat = discord.utils.get(message.guild.channels, id=757449377819263028)
 
-    # add reaction buttons for !au submit
-    if ("submited an au chickenwinna, " in message.content) and (message.author == client.user) and (message.channel == modchat):
-        await message.add_reaction("✅")
-        await message.add_reaction("☑️")
-        await message.add_reaction("❌")
-        await message.add_reaction("❓")
+	# add reaction buttons for !au submit
+	if ("submited an au chickenwinna, " in message.content) and (message.author == client.user) and (message.channel == modchat):
+		await message.add_reaction("✅")
+		await message.add_reaction("☑️")
+		await message.add_reaction("❌")
+		await message.add_reaction("❓")
 
-    if message.content.startswith(prefix):
-        if message.author == client.user:
-            return
-        elif (argslist[0] == "au"): # au commands
-            if (argslist[1] == "list"): # list all of the officially reconized au winnas
-                try:
-                    if (argslist[2] == "yes" or argslist[2] == "y"):
-                        await message.channel.send(embed=aulist)
-                    elif (argslist[2] == "no" or argslist[2] == "n"):
-                        await message.channel.send(embed=aulistnoemoji)
-                    else:
-                        await message.channel.send("fun fact: you can do !au list <yes/no> to choose whether or not you want the list of aus with or without the emojis", embed=aulist)
-                except IndexError:
-                    await message.channel.send("fun fact: you can do !au list <yes/no> to choose whether or not you want the list of aus with or without the emojis", embed=aulist)
-            elif (argslist[1] == "random"): # send a random au winna
-                await message.channel.send(auwinnas[random.randrange(len(auwinnas))])
-            elif (argslist[1] == "submit"): # submiting an au chickenwinna
-                try:
-                    ausubmitname = argslist[2]
-                except IndexError:
-                    await message.channel.send("you need an au name")
-                try:
-                    ausubmitemoji = message.attachments[0]
-                except IndexError:
-                    await message.channel.send("you need an image")
-                r = requests.get(ausubmitemoji.url, allow_redirects=True)
-                open('newemoji.png', 'wb').write(r.content)
-                open('newemojiname', 'wt').write(ausubmitname)
-                files = await attachments_to_files(message.attachments,True)
-                await modchat.send(f"{message.author.mention} submited an au chickenwinna, *{ausubmitname}*", files=files)
-            elif (argslist[1] == "help"): # the au command set's very own help message command!
-                auhelpmessage.color = 0x00C400
-                await message.channel.send(embed=auhelpmessage)
-            else:
-                auhelpmessage.color = 0xFF0000
-                await message.channel.send("unknown command, here are the commands for help", embed=auhelpmessage)
-        elif (argslist[0] == "morelike"): # the command that changes random letters with others in a bad attempt to be funny
-            morelike = message.content[10:].lower()
-            for x in message.mentions:
-                morelike = morelike.replace(f"<@!{x.id}>",x.name.lower())
-            for word in perfectwords:
-                if morelike == word:
-                    morelike = message.content[10:]
-                    await morelikeend(morelike, original=morelike, message=message)
-                    return
-            # fart
-            if (random.randrange(0, 2) == 1):
-                morelike = morelike.replace("fort","fart")
-                morelike = morelike.replace("fert","fart")
-                morelike = morelike.replace("firt","fart")
-                morelike = morelike.replace("furt","fart")
-            # gay and lame
-            if (random.randrange(0, 2) == 1):
-                morelike = morelike.replace("ga","gay")
-                for x in consonants:
-                    morelike = morelike.replace(f"{x}ay","gay")
-            else:
-                for x in consonants:
-                    morelike = morelike.replace(f"{x}ame","lame")
-            # double o
-            morelike = morelike.replace("o", "oo")
-            # i to o
-            morelike = morelike.replace("i","o")
-            # ae to æ
-            for x in consonants:
-                morelike = morelike.replace(f"a{x}e",f"æ{x}")
-            morelike = morelike.replace(f"ae",f"æ")
-            # a to e
-            morelike = morelike.replace("a", "e")
-            for x in consonants:
-                morelike = morelike.replace(f"{x}ee",f"pee")
-            morelike = morelike.replace("fertnote", "fartnite")
-            morelike = morelike.replace("foortnote", "fartnite")
-            await morelikeend(morelike, original=message.content[10:].lower(), message=message)
-        elif (argslist[0] == "pdp"): # command that sends a song from the show Puppy Dog Pals
-            if not (len(argslist) == 1): # for specifically requesting a song
-                try:
-                    x = int(argslist[1]) - 1
-                    if x == -1:
-                        await message.channel.send("that number is too high or low!")
-                        return
-                except ValueError:
-                    await message.channel.send("that is not a number!")
-                try:
-                    await message.channel.send(f"you requested this puppy dog pals song {pdpsongs[x]}")
-                except IndexError:
-                    await message.channel.send("that number is too high or low!")
-            else: # for a random song
-                await message.channel.send(f"your randomly selected puppy dog pals song is {pdpsongs[random.randrange(len(pdpsongs))]}")
-        elif (argslist[0] == "help"): # the help message, duh
-            helpmessage.color = 0x00C400
-            await message.channel.send(embed=helpmessage)
-        elif (argslist[0] == "admin"): # admin only commands
-            if (argslist[1] == "pfp"):
-                if not (message.author.id == 347198887309869078):
-                    await message.channel.send(f"https://cdn.discordapp.com/avatars/759088248537743380/{client.user.avatar}.png")
-                    return
-                try:
-                    if (argslist[2] == "reset"):
-                        await message.channel.send("reseting pfp...")
-                        await client.user.edit(avatar=open('resetpfp.png', 'rb').read())
-                        await message.channel.send("pfp has been reset back to normal")
-                except IndexError:
-                    try:
-                        try:
-                            open('newpfp.png', 'wb').write(requests.get(message.attachments[0].url, allow_redirects=True).content)
-                            await message.channel.send("changing pfp...")
-                            await client.user.edit(avatar=open('newpfp.png', 'rb').read())
-                            await message.channel.send("pfp has been changed")
-                        except discord.errors.HTTPException:
-                            await message.channel.send("You are changing your avatar too fast. Try again later.")
-                    except IndexError:
-                        await message.channel.send(f"https://cdn.discordapp.com/avatars/759088248537743380/{client.user.avatar}.png")
-            elif (argslist[1] == "status"):
-                if not admin in message.author.roles:
-                    return
-                try:
-                    name = " ".join(argslist[4:])
-                    if (argslist[3] == "playing"):
-                        activity = discord.Activity(name=name,type=discord.ActivityType.playing)
-                    if (argslist[3] == "watching"):
-                        activity = discord.Activity(name=name, type=discord.ActivityType.watching)
-                    if (argslist[3] == "streaming"):
-                        activity = discord.Activity(name=name, type=discord.ActivityType.streaming)
-                    if (argslist[3] == "listening"):
-                        activity = discord.Activity(name=name, type=discord.ActivityType.listening)
-                except IndexError:
-                    activity = None
+	if message.content.startswith(prefix):
+		if message.author == client.user:
+			return
+		elif (argslist[0] == "au"): # au commands
+			if (argslist[1] == "list"): # list all of the officially reconized au winnas
+				try:
+					if (argslist[2] == "yes" or argslist[2] == "y"):
+						await message.channel.send(embed=aulist)
+					elif (argslist[2] == "no" or argslist[2] == "n"):
+						await message.channel.send(embed=aulistnoemoji)
+					else:
+						await message.channel.send("fun fact: you can do !au list <yes/no> to choose whether or not you want the list of aus with or without the emojis", embed=aulist)
+				except IndexError:
+					await message.channel.send("fun fact: you can do !au list <yes/no> to choose whether or not you want the list of aus with or without the emojis", embed=aulist)
+			elif (argslist[1] == "random"): # send a random au winna
+				await message.channel.send(auwinnas[random.randrange(len(auwinnas))])
+			elif (argslist[1] == "submit"): # submiting an au chickenwinna
+				try:
+					ausubmitname = argslist[2]
+				except IndexError:
+					await message.channel.send("you need an au name")
+				try:
+					ausubmitemoji = message.attachments[0]
+				except IndexError:
+					await message.channel.send("you need an image")
+				r = requests.get(ausubmitemoji.url, allow_redirects=True)
+				open('newemoji.png', 'wb').write(r.content)
+				open('newemojiname', 'wt').write(ausubmitname)
+				files = await attachments_to_files(message.attachments,True)
+				await modchat.send(f"{message.author.mention} submited an au chickenwinna, *{ausubmitname}*", files=files)
+			elif (argslist[1] == "help"): # the au command set's very own help message command!
+				auhelpmessage.color = 0x00C400
+				await message.channel.send(embed=auhelpmessage)
+			else:
+				auhelpmessage.color = 0xFF0000
+				await message.channel.send("unknown command, here are the commands for help", embed=auhelpmessage)
+		elif (argslist[0] == "morelike"): # the command that changes random letters with others in a bad attempt to be funny
+			morelike = message.content[10:].lower()
+			for x in message.mentions:
+				morelike = morelike.replace(f"<@!{x.id}>",x.name.lower())
+			for word in perfectwords:
+				if morelike == word:
+					morelike = message.content[10:]
+					await morelikeend(morelike, original=morelike, message=message)
+					return
+			# fart
+			if (random.randrange(0, 2) == 1):
+				morelike = morelike.replace("fort","fart")
+				morelike = morelike.replace("fert","fart")
+				morelike = morelike.replace("firt","fart")
+				morelike = morelike.replace("furt","fart")
+			# gay and lame
+			if (random.randrange(0, 2) == 1):
+				morelike = morelike.replace("ga","gay")
+				for x in consonants:
+					morelike = morelike.replace(f"{x}ay","gay")
+			else:
+				for x in consonants:
+					morelike = morelike.replace(f"{x}ame","lame")
+			# double o
+			morelike = morelike.replace("o", "oo")
+			# i to o
+			morelike = morelike.replace("i","o")
+			# ae to æ
+			for x in consonants:
+				morelike = morelike.replace(f"a{x}e",f"æ{x}")
+			morelike = morelike.replace(f"ae",f"æ")
+			# a to e
+			morelike = morelike.replace("a", "e")
+			for x in consonants:
+				morelike = morelike.replace(f"{x}ee",f"pee")
+			morelike = morelike.replace("fertnote", "fartnite")
+			morelike = morelike.replace("foortnote", "fartnite")
+			await morelikeend(morelike, original=message.content[10:].lower(), message=message)
+		elif (argslist[0] == "pdp"): # command that sends a song from the show Puppy Dog Pals
+			if not (len(argslist) == 1): # for specifically requesting a song
+				try:
+					x = int(argslist[1]) - 1
+					if x == -1:
+						await message.channel.send("that number is too high or low!")
+						return
+				except ValueError:
+					await message.channel.send("that is not a number!")
+				try:
+					await message.channel.send(f"you requested this puppy dog pals song {pdpsongs[x]}")
+				except IndexError:
+					await message.channel.send("that number is too high or low!")
+			else: # for a random song
+				await message.channel.send(f"your randomly selected puppy dog pals song is {pdpsongs[random.randrange(len(pdpsongs))]}")
+		elif (argslist[0] == "help"): # the help message, duh
+			helpmessage.color = 0x00C400
+			await message.channel.send(embed=helpmessage)
+		elif (argslist[0] == "admin"): # admin only commands
+			if (argslist[1] == "pfp"):
+				if not (message.author.id == 347198887309869078):
+					await message.channel.send(f"https://cdn.discordapp.com/avatars/759088248537743380/{client.user.avatar}.png")
+					return
+				try:
+					if (argslist[2] == "reset"):
+						await message.channel.send("reseting pfp...")
+						await client.user.edit(avatar=open('resetpfp.png', 'rb').read())
+						await message.channel.send("pfp has been reset back to normal")
+				except IndexError:
+					try:
+						try:
+							open('newpfp.png', 'wb').write(requests.get(message.attachments[0].url, allow_redirects=True).content)
+							await message.channel.send("changing pfp...")
+							await client.user.edit(avatar=open('newpfp.png', 'rb').read())
+							await message.channel.send("pfp has been changed")
+						except discord.errors.HTTPException:
+							await message.channel.send("You are changing your avatar too fast. Try again later.")
+					except IndexError:
+						await message.channel.send(f"https://cdn.discordapp.com/avatars/759088248537743380/{client.user.avatar}.png")
+			elif (argslist[1] == "status"):
+				if not admin in message.author.roles:
+					return
+				try:
+					name = " ".join(argslist[4:])
+					if (argslist[3] == "playing"):
+						activity = discord.Activity(name=name,type=discord.ActivityType.playing)
+					if (argslist[3] == "watching"):
+						activity = discord.Activity(name=name, type=discord.ActivityType.watching)
+					if (argslist[3] == "streaming"):
+						activity = discord.Activity(name=name, type=discord.ActivityType.streaming)
+					if (argslist[3] == "listening"):
+						activity = discord.Activity(name=name, type=discord.ActivityType.listening)
+				except IndexError:
+					activity = None
 
-                try: 
-                    if (argslist[2] == "online"):
-                        await client.change_presence(status=discord.Status.online, activity=activity)
-                    elif (argslist[2] == "idle"):
-                        await client.change_presence(status=discord.Status.idle, activity=activity)
-                    elif (argslist[2] == "dnd"):
-                        await client.change_presence(status=discord.Status.dnd, activity=activity)
-                    elif (argslist[2] == "offline"):
-                        await client.change_presence(status=discord.Status.offline)
-                    else:
-                        await message.channel.send("thats not an actual status idiot")
-                        return
-                    await message.channel.send(f"status set to {message.content[14:]}")
-                except IndexError:
-                    await message.channel.send("you need to give a status")
-            elif (argslist[1] == "name"):
-                if not admin in message.author.roles:
-                    return
-                newname = " ".join(argslist[2:])
-                if len(newname) > 32:
-                    return
-                await message.channel.send("changing name...")
-                try:
-                    await client.user.edit(username=newname)
-                    await message.channel.send("named changed!")
-                except discord.errors.HTTPException:
-                    await message.channel.send("You are changing your username or Discord Tag too fast. Try again later.")
-            elif (argslist[1] == "help"):
-                if not admin in message.author.roles or message.author.id == 347198887309869078:
-                    return
-                adminhelpmessage.color = 0x00C400
-                await message.channel.send(embed=adminhelpmessage)
-            else:
-                if not admin in message.author.roles:
-                    return
-                adminhelpmessage.color = 0xFF0000
-                await message.channel.send("unknown command, here is the list of commands for the !admin command set", embed=adminhelpmessage)
-        elif (argslist[0] == "echos"): # command for big c to make lil c say what he wants
-            if not (message.author.id == 347198887309869078):
-                return
-            images = await attachments_to_files(message.attachments,True)
-            try:
-                await message.channel.send(message.content[6:],files=images)
-            except discord.errors.HTTPException:
-                await message.channel.send("Cannot send an empty message")
-            await message.delete()
-        else: # for when an unknown command is put in
-            helpmessage.color = 0xFF0000
-            await message.channel.send("unknown command, here are the commands for help", embed=helpmessage)
+				try: 
+					if (argslist[2] == "online"):
+						await client.change_presence(status=discord.Status.online, activity=activity)
+					elif (argslist[2] == "idle"):
+						await client.change_presence(status=discord.Status.idle, activity=activity)
+					elif (argslist[2] == "dnd"):
+						await client.change_presence(status=discord.Status.dnd, activity=activity)
+					elif (argslist[2] == "offline"):
+						await client.change_presence(status=discord.Status.offline)
+					else:
+						await message.channel.send("thats not an actual status idiot")
+						return
+					await message.channel.send(f"status set to {message.content[14:]}")
+				except IndexError:
+					await message.channel.send("you need to give a status")
+			elif (argslist[1] == "name"):
+				if not admin in message.author.roles:
+					return
+				newname = " ".join(argslist[2:])
+				if len(newname) > 32:
+					return
+				await message.channel.send("changing name...")
+				try:
+					await client.user.edit(username=newname)
+					await message.channel.send("named changed!")
+				except discord.errors.HTTPException:
+					await message.channel.send("You are changing your username or Discord Tag too fast. Try again later.")
+			elif (argslist[1] == "help"):
+				if not admin in message.author.roles or message.author.id == 347198887309869078:
+					return
+				adminhelpmessage.color = 0x00C400
+				await message.channel.send(embed=adminhelpmessage)
+			else:
+				if not admin in message.author.roles:
+					return
+				adminhelpmessage.color = 0xFF0000
+				await message.channel.send("unknown command, here is the list of commands for the !admin command set", embed=adminhelpmessage)
+		elif (argslist[0] == "echos"): # command for big c to make lil c say what he wants
+			if not (message.author.id == 347198887309869078):
+				return
+			images = await attachments_to_files(message.attachments,True)
+			try:
+				await message.channel.send(message.content[6:],files=images)
+			except discord.errors.HTTPException:
+				await message.channel.send("Cannot send an empty message")
+			await message.delete()
+		else: # for when an unknown command is put in
+			helpmessage.color = 0xFF0000
+			await message.channel.send("unknown command, here are the commands for help", embed=helpmessage)
 
 @client.event
 async def on_reaction_add(reaction, user):
-    message = reaction.message
-    modchat = discord.utils.get(message.guild.channels, id=757449377819263028)
-    general = discord.utils.get(message.guild.channels, id=757433959117488193)
-    
-    if user == client.user:
-        return
-    if not ("submited an au chickenwinna, " in message.content) and (message.author == client.user) and (message.channel == modchat):
-        return
+	message = reaction.message
+	modchat = discord.utils.get(message.guild.channels, id=757449377819263028)
+	general = discord.utils.get(message.guild.channels, id=757433959117488193)
+	
+	if user == client.user:
+		return
+	if not ("submited an au chickenwinna, " in message.content) and (message.author == client.user) and (message.channel == modchat):
+		return
 
-    newemojiname = open('newemojiname', 'rt').read()
-    newemoji = open('newemoji.png', 'rb').read()
+	newemojiname = open('newemojiname', 'rt').read()
+	newemoji = open('newemoji.png', 'rb').read()
 
-    if reaction.emoji == "✅":
-        try:
-            await message.guild.create_custom_emoji(name=newemojiname,image=newemoji)
-            await general.send(f"{message.mentions[0].mention} your au submission for {newemojiname} has been acccepted")
-        except discord.errors.HTTPException:
-            await general.send(f"{message.mentions[0].mention} your au submission for {newemojiname} has been acccepted but could not be made into an emoji due to an error (emoji cap, invalid character, etc)")
-        await message.clear_reaction("✅")
-        await message.clear_reaction("☑️")
-        await message.clear_reaction("❌")
-        await message.clear_reaction("❓")
-    elif reaction.emoji == "☑️":
-        await general.send(f"{message.mentions[0].mention} your au submission for {newemojiname} has been acccepted but wont be an emoji")
-        await message.clear_reaction("✅")
-        await message.clear_reaction("☑️")
-        await message.clear_reaction("❌")
-        await message.clear_reaction("❓")
-    elif reaction.emoji == "❌":
-        await general.send(f"{message.mentions[0].mention} your au submission for {newemojiname} has been denied. ask {user} why that is if you have questions")
-        await message.clear_reaction("✅")
-        await message.clear_reaction("☑️")
-        await message.clear_reaction("❌")
-        await message.clear_reaction("❓")
-    elif reaction.emoji == "❓":
-        await message.channel.send(f"{user.name}, here is what the emoji inputs do: \n✅ accepts and makes the submission an emoji \n☑️ accepts but does not make submission and emoji \n❌ denies the submission\n❓ you are reading it now idiot")
-    else:
-        return
+	if reaction.emoji == "✅":
+		try:
+			await message.guild.create_custom_emoji(name=newemojiname,image=newemoji)
+			await general.send(f"{message.mentions[0].mention} your au submission for {newemojiname} has been acccepted")
+		except discord.errors.HTTPException:
+			await general.send(f"{message.mentions[0].mention} your au submission for {newemojiname} has been acccepted but could not be made into an emoji due to an error (emoji cap, invalid character, etc)")
+		await message.clear_reaction("✅")
+		await message.clear_reaction("☑️")
+		await message.clear_reaction("❌")
+		await message.clear_reaction("❓")
+	elif reaction.emoji == "☑️":
+		await general.send(f"{message.mentions[0].mention} your au submission for {newemojiname} has been acccepted but wont be an emoji")
+		await message.clear_reaction("✅")
+		await message.clear_reaction("☑️")
+		await message.clear_reaction("❌")
+		await message.clear_reaction("❓")
+	elif reaction.emoji == "❌":
+		await general.send(f"{message.mentions[0].mention} your au submission for {newemojiname} has been denied. ask {user} why that is if you have questions")
+		await message.clear_reaction("✅")
+		await message.clear_reaction("☑️")
+		await message.clear_reaction("❌")
+		await message.clear_reaction("❓")
+	elif reaction.emoji == "❓":
+		await message.channel.send(f"{user.name}, here is what the emoji inputs do: \n✅ accepts and makes the submission an emoji \n☑️ accepts but does not make submission and emoji \n❌ denies the submission\n❓ you are reading it now idiot")
+	else:
+		return
 
 @client.event
 async def on_member_update(before, after):
-    if not after.id == 347198887309869078:
-        return
+	if not after.id == 347198887309869078:
+		return
 
 
 client.run(token)
